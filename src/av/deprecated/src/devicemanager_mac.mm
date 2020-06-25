@@ -34,11 +34,6 @@
 #include "scy/av/devicemanager.h"
 
 #import <assert.h>
-#ifdef __MAC_OS_X_VERSION_MAX_ALLOWED
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 1070
-  #import <AVFoundation/AVFoundation.h>
-#endif
-#endif
 #import <QTKit/QTKit.h>
 
 // #include "webrtc/base/logging.h"
@@ -147,51 +142,8 @@ bool GetQTKitVideoDevices(std::vector<Device>* devices) {
 }
 
 bool GetAVFoundationVideoDevices(std::vector<Device>* devices) {
-#ifdef __MAC_OS_X_VERSION_MAX_ALLOWED
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >=1070
-  if (![MediaCaptureDevice class]) {
-    // Fallback to using QTKit if AVFoundation is not available
-    return GetQTKitVideoDevices(devices);
-  }
-#if !__has_feature(objc_arc)
-  NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-#else
-  @autoreleasepool
-#endif
-  {
-    NSArray* capture_devices = [MediaCaptureDevice devices];
-    SInfo << [capture_devices count] << " capture device(s) found:";
-    for (MediaCaptureDevice* capture_device in capture_devices) {
-      if ([capture_device hasMediaType:AVMediaTypeVideo] ||
-          [capture_device hasMediaType:AVMediaTypeMuxed]) {
-        static NSString* const kFormat = @"localizedName: \"%@\", "
-            @"modelID: \"%@\", uniqueID \"%@\", isConnected: %d, "
-            @"isInUseByAnotherApplication: %d";
-        NSString* info = [NSString
-            stringWithFormat:kFormat,
-                             [capture_device localizedName],
-                             [capture_device modelID],
-                             [capture_device uniqueID],
-                             [capture_device isConnected],
-                             [capture_device isInUseByAnotherApplication]];
-        SInfo << [info UTF8String];
-
-        std::string name([[capture_device localizedName] UTF8String]);
-        devices->push_back(
-            Device("video", devices->size() - 1, name)); //[[capture_device uniqueID] UTF8String]
-      }
-    }
-  }
-#if !__has_feature(objc_arc)
-  [pool drain];
-#endif
-  return true;
-#else  // __MAC_OS_X_VERSION_MAX_ALLOWED >=1070
+  // No more AVFoundation, we'll use QTKit to get a list of devices
   return GetQTKitVideoDevices(devices);
-#endif  // __MAC_OS_X_VERSION_MAX_ALLOWED >=1070
-#else  // __MAC_OS_X_VERSION_MAX_ALLOWED
-  return GetQTKitVideoDevices(devices);
-#endif  // __MAC_OS_X_VERSION_MAX_ALLOWED
 }
 
 } // namespace av

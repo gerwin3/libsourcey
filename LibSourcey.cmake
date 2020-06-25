@@ -233,12 +233,13 @@ if(APPLE)
   # endif()
   set(CMAKE_MACOSX_RPATH ON)
 
-  if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    find_library(FOUNDATION Foundation)
-    find_library(AVFOUNDATION AVFoundation)
-
-    list(APPEND LibSourcey_BUILD_DEPENDENCIES ${FOUNDATION} ${AVFOUNDATION})
-  endif()
+  # Disable AVFoundation dependency because it collides with ffmpeg
+  #if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  #  find_library(FOUNDATION Foundation)
+  #  find_library(AVFOUNDATION AVFoundation)
+  #
+  #  list(APPEND LibSourcey_BUILD_DEPENDENCIES ${FOUNDATION} ${AVFOUNDATION})
+  #endif()
 
   #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Foundation -framework AVFoundation")
   #set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")

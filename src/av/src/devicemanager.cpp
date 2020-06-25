@@ -42,7 +42,6 @@
         "dsound"                                                               \
     }
 #elif defined(SCY_APPLE)
-#include "scy/av/apple/avfoundation.h"
 #define SCY_VIDEO_INPUTS                                                       \
     {                                                                          \
         "avfoundation", "qtkit"                                                \
